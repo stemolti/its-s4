@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://its-s4.vercel.app",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
