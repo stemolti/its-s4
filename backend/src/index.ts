@@ -1,21 +1,23 @@
+// api/index.ts  (unica lambda)
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import mongoose from 'mongoose';
 import app from './app';
 import dotenv from 'dotenv';
 dotenv.config();
 
-let cachedConn: typeof mongoose | null = null;
+let cached = global.mongooseConn as typeof mongoose | undefined;
 
 async function dbConnect() {
-  if (cachedConn) return cachedConn;            // ➜ hot-start: riusa
-  cachedConn = await mongoose.connect(process.env.MONGO_URI as string, {
-    serverSelectionTimeoutMS: 30000,            // opzionale: +timeout
+  if (cached) return cached;                    // hot-start
+  cached = await mongoose.connect(process.env.MONGO_URI as string, {
+    // allunga, se vuoi, il server-selection timeout
+    serverSelectionTimeoutMS: 30000,
   });
   console.log('🟢 MongoDB connected');
-  return cachedConn;
+  return cached;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  await dbConnect();       // ➜ garantisce DB pronto
-  return app(req, res);    // delega a Express
+  await dbConnect();                            // 👉 attendo SEMPRE
+  return app(req, res);                         // delego ad Express
 }
