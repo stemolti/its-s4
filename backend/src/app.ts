@@ -7,11 +7,7 @@ import './utils/auth/auth-handlers';
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://its-s4-5it6.vercel.app',
-  credentials: true
-}));
-
+app.use(cors());
 app.use(morgan('tiny'));
 app.use(bodyParser.json());
 
